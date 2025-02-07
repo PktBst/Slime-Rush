@@ -11,7 +11,11 @@ namespace Player
 
         [SerializeField] private float speed;
         [SerializeField] private int ExtraJumps;
+        private int initialExtraJumps;
         [SerializeField] private float jumpForce;
+
+        [SerializeField] Animator animator;
+        [SerializeField] GameObject JumpEffectSfx;
 
         private float HorizontalInput;
         private Rigidbody2D rb;
@@ -19,6 +23,7 @@ namespace Player
 
         private void Start()
         {
+            initialExtraJumps = ExtraJumps;
             rb = GetComponent<Rigidbody2D>();
         }
         private void LateUpdate()
@@ -27,23 +32,30 @@ namespace Player
             isGrounded = Physics2D.OverlapCircle(GroundCheck.position,CheckRadius,WhatIsGround);
             HorizontalInput = Input.GetAxis("Horizontal");
             rb.linearVelocityX = HorizontalInput * speed;
+            if (isGrounded)
+            {
+                if (HorizontalInput > 0 && facingRight != true)
+                {
+                    ToggleFaceSide();
+                }
+                if (HorizontalInput < 0 && facingRight != false)
+                {
+                    ToggleFaceSide();
+                }
+            }
 
-            if (HorizontalInput > 0 && facingRight!=true) {
-                ToggleFaceSide();
-            }
-            if (HorizontalInput < 0 && facingRight != false) {
-                ToggleFaceSide();
-            }
         }
 
         private void Update()
         {
             if (isGrounded)
             {
-                ExtraJumps = 2;
+                ExtraJumps = initialExtraJumps;
             }
 
             if(Input.GetKeyDown(KeyCode.Space) && ExtraJumps > 0){
+                animator.SetTrigger("Jump");
+                Instantiate(JumpEffectSfx,transform.position,transform.rotation);
                 rb.linearVelocity = Vector2.up * jumpForce;
                 ExtraJumps--;
             }
