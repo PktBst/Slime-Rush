@@ -53,7 +53,7 @@ namespace Player
                 ExtraJumps = initialExtraJumps;
             }
 
-            if(Input.GetKeyDown(KeyCode.Space) && ExtraJumps > 0){
+            if((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.UpArrow)) && ExtraJumps > 0){
                 animator.SetTrigger("Jump");
                 Instantiate(JumpEffectSfx,transform.position,transform.rotation);
                 rb.linearVelocity = Vector2.up * jumpForce;
